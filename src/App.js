@@ -4,7 +4,7 @@ import { Input } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import './App.css';
 import Post from './components/Post/Post';
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 
 
 function getModalStyle() {
@@ -34,10 +34,28 @@ function App() {
   const [modalStyle] = useState(getModalStyle());
   const [posts, setPosts] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openSignIn, setOpenSignIn] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(authUser => {
+      if (authUser) {
+        setUser(authUser);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      // perform some cleanup actions
+      unsubscribe();
+    }
+  }, [user, username])
+
+  console.log(user)
 
   useEffect(() => {
     db.collection("posts").onSnapshot(snapshot => {
@@ -47,6 +65,27 @@ function App() {
       })))
     })
   }, [])
+
+  const signUp = (e) => {
+    e.preventDefault();
+
+    auth.createUserWithEmailAndPassword(email, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({ displayName: username });
+      })
+      .catch((err) => alert(err.message))
+
+    setOpen(false);
+  }
+
+  const signIn = (e) => {
+    e.preventDefault();
+
+    auth.signInWithEmailAndPassword(email, password)
+      .catch(err => alert(err.message))
+
+    setOpenSignIn(false);
+  }
 
   return (
     <div className="app">
@@ -78,7 +117,34 @@ function App() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <Button>Sign Up</Button>
+            <Button onClick={signUp}>Sign Up</Button>
+          </form>
+        </div>
+      </Modal>
+
+      <Modal
+        open={openSignIn}
+        onClose={() => setOpenSignIn(false)}
+      >
+        <div style={modalStyle} className={classes.paper}>
+          <form className="app__signup">
+            <center>
+              <img className="app__headerImage" src="https://www.freepnglogos.com/uploads/instagram-logo-png-transparent-0.png" alt="" />
+            </center>
+
+            <Input
+              placeholder="email"
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              placeholder="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button type="submit" onClick={signIn}>Sign In</Button>
           </form>
         </div>
       </Modal>
@@ -87,7 +153,17 @@ function App() {
         <img className="app__headerImage" src="https://www.freepnglogos.com/uploads/instagram-logo-png-transparent-0.png" alt="logo" />
       </div>
 
-      <Button className="app__signUpButton" onClick={() => setOpen(true)}>Sign Up</Button>
+      {
+        user ? (
+          <Button onClick={() => auth.signOut()}>Log Out</Button>
+        ) : (
+          <div className="app__loginContainer">
+            <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
+            <Button onClick={() => setOpen(true)}>Sign Up</Button>
+          </div>
+        )
+      }
+
 
       {
         posts.map(({ post, id }) => (
