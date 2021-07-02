@@ -9,3 +9,7 @@
   width: 100px;
   object-fit: contain;
 }
+
+.app__signUpButton {
+  color: white;
+}
