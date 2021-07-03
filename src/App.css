@@ -6,6 +6,8 @@
   background-color: white;
   border-bottom: 1px solid lightgray;
   padding: 20px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .app__headerImage {

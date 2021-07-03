@@ -91,12 +91,6 @@ function App() {
   return (
     <div className="app">
 
-      {user?.displayName ? (
-        <ImageUpload username={user.displayName} />
-      ) : (
-        <h3>Sorry, you need to login to upload.</h3>
-      )}
-
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -158,18 +152,20 @@ function App() {
 
       <div className="app__header">
         <img className="app__headerImage" src="https://www.freepnglogos.com/uploads/instagram-logo-png-transparent-0.png" alt="logo" />
+
+        {
+          user ? (
+            <Button onClick={() => auth.signOut()}>Log Out</Button>
+          ) : (
+            <div className="app__loginContainer">
+              <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
+              <Button onClick={() => setOpen(true)}>Sign Up</Button>
+            </div>
+          )
+        }
       </div>
 
-      {
-        user ? (
-          <Button onClick={() => auth.signOut()}>Log Out</Button>
-        ) : (
-          <div className="app__loginContainer">
-            <Button onClick={() => setOpenSignIn(true)}>Sign In</Button>
-            <Button onClick={() => setOpen(true)}>Sign Up</Button>
-          </div>
-        )
-      }
+
 
 
       {
@@ -177,6 +173,13 @@ function App() {
           <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
         ))
       }
+
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) : (
+        <h3>Sorry, you need to login to upload.</h3>
+      )}
+
     </div>
   );
 }
