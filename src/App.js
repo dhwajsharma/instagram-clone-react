@@ -3,6 +3,7 @@ import { makeStyles, Modal } from '@material-ui/core';
 import { Input } from '@material-ui/core';
 import { useEffect, useState } from 'react';
 import './App.css';
+import ImageUpload from './components/ImageUpload/ImageUpload';
 import Post from './components/Post/Post';
 import { auth, db } from "./firebase";
 
@@ -58,7 +59,7 @@ function App() {
   console.log(user)
 
   useEffect(() => {
-    db.collection("posts").onSnapshot(snapshot => {
+    db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snapshot => {
       setPosts(snapshot.docs.map(doc => ({
         id: doc.id,
         post: doc.data()
@@ -89,6 +90,12 @@ function App() {
 
   return (
     <div className="app">
+
+      {user?.displayName ? (
+        <ImageUpload username={user.displayName} />
+      ) : (
+        <h3>Sorry, you need to login to upload.</h3>
+      )}
 
       <Modal
         open={open}
