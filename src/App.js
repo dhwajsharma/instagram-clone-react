@@ -6,8 +6,6 @@ import './App.css';
 import ImageUpload from './components/ImageUpload/ImageUpload';
 import Post from './components/Post/Post';
 import { auth, db } from "./firebase";
-import InstagramEmbed from 'react-instagram-embed';
-
 
 function getModalStyle() {
   const top = 50;
