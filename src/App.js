@@ -6,6 +6,7 @@ import './App.css';
 import ImageUpload from './components/ImageUpload/ImageUpload';
 import Post from './components/Post/Post';
 import { auth, db } from "./firebase";
+import InstagramEmbed from 'react-instagram-embed';
 
 
 function getModalStyle() {
@@ -56,7 +57,6 @@ function App() {
     }
   }, [user, username])
 
-  console.log(user)
 
   useEffect(() => {
     db.collection("posts").orderBy("timestamp", "desc").onSnapshot(snapshot => {
@@ -151,7 +151,7 @@ function App() {
       </Modal>
 
       <div className="app__header">
-        <img className="app__headerImage" src="https://www.freepnglogos.com/uploads/instagram-logo-png-transparent-0.png" alt="logo" />
+        <img className="app__headerImage" src="https://www.instagram.com/static/images/web/mobile_nav_type_logo-2x.png/1b47f9d0e595.png" alt="logo" />
 
         {
           user ? (
@@ -165,14 +165,13 @@ function App() {
         }
       </div>
 
-
-
-
-      {
-        posts.map(({ post, id }) => (
-          <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
-        ))
-      }
+      <div className="app__posts">
+        {
+          posts.map(({ post, id }) => (
+            <Post key={id} username={post.username} caption={post.caption} imageUrl={post.imageUrl} />
+          ))
+        }
+      </div>
 
       {user?.displayName ? (
         <ImageUpload username={user.displayName} />

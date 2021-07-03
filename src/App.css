@@ -11,12 +11,16 @@
 }
 
 .app__headerImage {
-  height: 100px;
-  width: 100px;
   object-fit: contain;
 }
 
 .app__signup {
   display: flex;
   flex-direction: column;
+}
+
+.app__posts {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
 }
